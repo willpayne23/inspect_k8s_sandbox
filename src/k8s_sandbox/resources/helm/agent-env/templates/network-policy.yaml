@@ -42,13 +42,12 @@ spec:
       - matchLabels:
           io.kubernetes.pod.namespace: {{ .Release.Namespace }}
           {{- include "agentEnv.selectorLabels" $ | nindent 10 }}
-        icpms:
+        icmps:
           - fields:
-              family: IPv4
-              type: 8     # Echo Request
-          - fields:
-              family: IPv6
-              type: 128   # Echo Request
+            - type: 8     # Echo Request
+              code: 0
+            - type: 128   # Echo Request
+              code: 0
     {{- if .Values.allowDomains }}
     - toFQDNs:
     {{- range .Values.allowDomains }}
@@ -120,14 +119,15 @@ spec:
           {{- include "agentEnv.selectorLabels" $ | nindent 10 }}
           aisi.gov.uk/network-{{ $net }}: "true"
       icmps:
-        - family: IPv4
-          type: 8
-        - family: IPv4
-          type: 0
-        - family: IPv6
-          type: 128
-        - family: IPv6
-          type: 129
+        - fields: 
+          - type: 8
+            code: 0
+          - type: 0
+            code: 0
+          - type: 128
+            code: 0
+          - type: 129
+            code: 0
       {{- end }}
     {{- else }}
     {{- /* If no network fallback to default rule (no ingress) */}}
@@ -171,10 +171,9 @@ spec:
           {{- include "agentEnv.selectorLabels" $ | nindent 10 }}
       icmps:
         - fields:
+          - type: 8
             family: IPv4
-            type: 8
-        - fields:
+          - type: 128
             family: IPv6
-            type: 128
   {{- end }}
 {{- end }}
